@@ -56,16 +56,18 @@ export default function Home() {
   useEffect (() => {
     updatePantry()
   }, [])
+  
+  
   // add function 
-  
-  
+
   const addItem = async (item) => {
     const docRef = doc(collection(firestore,'pantry'),item)
     
     const docSnap = await getDoc(docRef)
-
+    // checks if document exists in the database
     if (docSnap.exists()) {
       const {count} = docSnap.data()
+    //increments by one if so
       await setDoc(docRef, {count: count +1})
     } else {
       await setDoc(docRef,{count:1})
@@ -77,7 +79,7 @@ export default function Home() {
   const deleteItem = async (item) => {
     const docRef = doc(collection(firestore,'pantry'),item)
     const docSnap = await getDoc(docRef)
-    //checks if it exists
+  //checks if it exists
     if (docSnap.exists()){
       const {count} = docSnap.data()
       if (count === 1){
@@ -90,7 +92,7 @@ export default function Home() {
   }
 
   return ( 
-    
+  //background
     <Box 
       width="100vw" 
       height="100vh"
@@ -104,6 +106,7 @@ export default function Home() {
       }}
     >
       <Box
+        //Header
         width="100vw"
         height="60px"
         sx={{
@@ -120,20 +123,22 @@ export default function Home() {
         
       >
         
-        <Typography color={'#f0f0f0'} variant="h6" sx={{
-      textShadow: '2px 2px 4px rgba(0, 0, 0, 0.6)',
-      // Add text shadow
-      padding: 2
-    }}>
+        <Typography 
+          color={'#f0f0f0'} 
+          variant="h6" 
+          sx={{
+            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.6)',
+          // Add text shadow
+          padding: 2
+          }}
+        >
           Pantry Management System
         </Typography>
         
       </Box>
 
-
-       
-        
-        <Box 
+        <Box
+          //table header
           width={'85vw'}
           height={'50px'}
           sx={{
@@ -150,13 +155,17 @@ export default function Home() {
             variant="h5"
             color={'#f0f0f0'}
             textAlign={'center'}
-            sx={{ flex: 1, textAlign: 'left' }}
+            sx={{ 
+              flex: 1, 
+              textAlign: 'left' 
+            }}
           >
             Pantry Items
           </Typography>
           
         
-          <TextField 
+          <TextField
+            //text field to add items 
             id="outlined-basic" 
             label="Add Item"
             size="small"
@@ -167,7 +176,8 @@ export default function Home() {
               style: { color: 'white' }, // Set the label color to blue
             }}
           />
-          <Button 
+          <Button
+            //confirm button to add new item 
             variant="outlined" 
             onClick={() => {
               if (itemName.trim() !== ''){
@@ -181,9 +191,16 @@ export default function Home() {
           </Button>
         </Box>
         
-        <Stack width={'85vw'} height={'500px'} spacing={2} overflow={'auto'}>
+        <Stack 
+          //pantry item table structure
+          width={'85vw'} 
+          height={'500px'} 
+          spacing={2} 
+          overflow={'auto'}
+        >
           {pantry.map(({name, count}) => (
             <Box
+              //loops through each document/item in the pantry database and styles it
               key={name}
               width={'100%'}
               minHeight={'100px'}
@@ -193,7 +210,8 @@ export default function Home() {
               bgcolor={'#f0f0f0'}
               paddingX={5}
             >
-              <Typography 
+              <Typography
+                //keeps the item on leftmost side
                 variant="h5"
                 color={'#333'}
                 textAlign={'center'}
@@ -204,21 +222,34 @@ export default function Home() {
                 }
               </Typography>
               
-              <Button onClick={() => {
-                addItem(name)
-              }}  >
+              <Button
+                // + button to increment item count
+                onClick={() => {
+                  addItem(name)
+                }}
+              >
                 <Typography variant="h4">
                   +
                 </Typography>
               </Button>
 
-              <Typography variant="h5" sx={{ textAlign: 'center', width: '50px' }}>
+              <Typography
+                // displays the current qunatity of the item
+                variant="h5" 
+                sx={{ 
+                  textAlign: 'center', 
+                  width: '50px' 
+                }}
+              >
                 {count}
               </Typography>
               
-              <Button onClick={() => {
-                deleteItem(name)
-              }}  >
+              <Button
+              // deletes item when clicking the "-" button
+                onClick={() => {
+                  deleteItem(name)
+                }}  
+              >
                 <Typography variant="h2">
                   -
                 </Typography>
