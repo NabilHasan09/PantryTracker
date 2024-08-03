@@ -3,7 +3,7 @@ import { Box, Stack, Typography, Button, Modal, TextField} from "@mui/material";
 import { firestore } from "./firebase";
 import { useEffect, useState } from "react";
 import { deleteDoc, query } from "firebase/firestore";
-import { collection, getDocs, setDoc, doc } from "firebase/firestore";
+import { collection, getDocs, setDoc, doc, getDoc } from "firebase/firestore";
 
 const commonStyles = {
   bgcolor: 'background.paper',
@@ -44,27 +44,48 @@ export default function Home() {
     const snapshot = query(collection(firestore, 'pantry'))
     // gets documents/pantry items 
     const docs = await getDocs(snapshot)
+    
     //converts to list 
     const pantryList = []
     docs.forEach((doc) => {
-      pantryList.push(doc.id)
+      pantryList.push({name: doc.id, ...doc.data()})
     })
+    console.log(pantryList)
     setPantry(pantryList)
   }
   useEffect (() => {
     updatePantry()
   }, [])
   // add function 
+  
+  
   const addItem = async (item) => {
     const docRef = doc(collection(firestore,'pantry'),item)
-    await setDoc(docRef,{})
+    
+    const docSnap = await getDoc(docRef)
+
+    if (docSnap.exists()) {
+      const {count} = docSnap.data()
+      await setDoc(docRef, {count: count +1})
+    } else {
+      await setDoc(docRef,{count:1})
+    }
     await updatePantry()
   }
   
   // Delete function
   const deleteItem = async (item) => {
     const docRef = doc(collection(firestore,'pantry'),item)
-    await deleteDoc(docRef)
+    const docSnap = await getDoc(docRef)
+    //checks if it exists
+    if (docSnap.exists()){
+      const {count} = docSnap.data()
+      if (count === 1){
+        await deleteDoc(docRef)
+      } else {
+      await setDoc(docRef, {count: count - 1})
+      }
+    }
     await updatePantry()
   }
 
@@ -101,8 +122,10 @@ export default function Home() {
             <Button 
               variant="outlined" 
               onClick={() => {
-                addItem(itemName)
-                setItemName('')
+                if (itemName.trim() !== ''){
+                  addItem(itemName);
+                } 
+                setItemName('');
                 handleClose();
               }}
             >
@@ -135,11 +158,11 @@ export default function Home() {
         </Box>
         
         <Stack width={'800px'} height={'400px'} spacing={2} overflow={'auto'}>
-          {pantry.map((i) => (
+          {pantry.map(({name, count}) => (
             <Box
-              key={i}
+              key={name}
               width={'100%'}
-              height={'100px'}
+              minHeight={'200px'}
               display={'flex'}
               justifyContent={'space-between'}
               alignItems={'center'}
@@ -152,13 +175,15 @@ export default function Home() {
                 textAlign={'center'}
               >
                 {
-                  i.charAt(0).toUpperCase() + i.slice(1)
+                  name.charAt(0).toUpperCase() + name.slice(1)
                 }
               </Typography>
-              <Button variant="" onClick={() => {
-                deleteItem(i)
-                
-              }}>
+              <Typography variant="h5">
+                Quantity: {count}
+              </Typography>
+              <Button onClick={() => {
+                deleteItem(name)
+              }}  >
                 Delete
               </Button>
             </Box>
