@@ -135,58 +135,50 @@ export default function Home() {
         
         <Box 
           width={'85vw'}
-          height={'px'}
-          bgcolor={'black'}
+          height={'50px'}
+          sx={{
+            background: "linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(21,36,63,1) 100%)"
+          }}
           display = 'flex'
           justifyContent={'space-between'}
           alignItems={'center'}
           paddingX={5}
+          boxShadow={3}
 
         >
           <Typography
             variant="h5"
             color={'#f0f0f0'}
             textAlign={'center'}
+            sx={{ flex: 1, textAlign: 'left' }}
           >
             Pantry Items
           </Typography>
           
-
-          <Modal
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
+        
+          <TextField 
+            id="outlined-basic" 
+            label="Add Item"
+            size="small"
+            variant="outlined"
+            value={itemName}
+            onChange={(e)=>setItemName(e.target.value)}
+            InputLabelProps={{
+              style: { color: 'white' }, // Set the label color to blue
+            }}
+          />
+          <Button 
+            variant="outlined" 
+            onClick={() => {
+              if (itemName.trim() !== ''){
+                addItem(itemName);
+              } 
+              setItemName('')
+              handleClose();
+            }}
           >
-            <Box sx= {style}>
-              <Typography id ="modal-modal-title" variant="h6" component={'h2'}>
-                Add Item
-              </Typography>
-              <Stack width={'100%'}direction = {'row'} spacing ={2}>
-                <TextField 
-                  id="outlined-basic" 
-                  label="Item" 
-                  variant="outlined" 
-                  fullWidth
-                  value={itemName}
-                  onChange={(e)=>setItemName(e.target.value)}
-                />
-                <Button 
-                  variant="outlined" 
-                  onClick={() => {
-                    if (itemName.trim() !== ''){
-                      addItem(itemName);
-                    } 
-                    setItemName('')
-                    handleClose();
-                  }}
-                >
-                  Add 
-                </Button>
-              </Stack>
-            </Box>
-          </Modal>
-        <Button variant = "outlined" onClick={handleOpen}>Add Item</Button>
+            Add 
+          </Button>
         </Box>
         
         <Stack width={'85vw'} height={'500px'} spacing={2} overflow={'auto'}>
