@@ -99,70 +99,102 @@ export default function Home() {
       alignItems={'center'}
       flexDirection={'column'}
       gap={2}
+      sx={{
+        background: "linear-gradient(rgba(0,0,0,1) 0%, rgba(21,36,63,1) 100%)"
+      }}
     >
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
+      <Box
+        width="100vw"
+        height="60px"
+        sx={{
+          background: "linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(21,36,63,1) 100%)"
+        }}
+        display="flex"
+        justifyContent="space-between"
+        alignItems="space-between"
+        position="fixed"
+        top={0}
+        left={0}
+        zIndex={1000} // Ensure it appears on top
+        boxShadow={3} // Add shadow for visual depth
+        
       >
-        <Box sx= {style}>
-          <Typography id ="modal-modal-title" variant="h6" component={'h2'}>
-            Add Item
-          </Typography>
-          <Stack width={'100%'}direction = {'row'} spacing ={2}>
-            <TextField 
-              id="outlined-basic" 
-              label="Item" 
-              variant="outlined" 
-              fullWidth
-              value={itemName}
-              onChange={(e)=>setItemName(e.target.value)}
-            />
-            <Button 
-              variant="outlined" 
-              onClick={() => {
-                if (itemName.trim() !== ''){
-                  addItem(itemName);
-                } 
-                setItemName('');
-                handleClose();
-              }}
-            >
-              Add 
-            </Button>
-          </Stack>
-        </Box>
-      </Modal>
-      <Button variant = "contained" onClick={handleOpen}>Add Item</Button>
+        
+        <Typography color={'#f0f0f0'} variant="h6" sx={{
+      textShadow: '2px 2px 4px rgba(0, 0, 0, 0.6)',
+      // Add text shadow
+      padding: 2
+    }}>
+          Pantry Management System
+        </Typography>
+        
+      </Box>
 
-      <Box border={'2px solid #333'}>  
+
+       
         
         <Box 
-          width={'800px'}
-          height={'100px'}
-          bgcolor={'#FFCCCB'}
+          width={'85vw'}
+          height={'px'}
+          bgcolor={'black'}
           display = 'flex'
-          justifyContent={'center'}
+          justifyContent={'space-between'}
           alignItems={'center'}
+          paddingX={5}
 
         >
           <Typography
-            variant="h2"
-            color={'#333'}
-            textAlign={'center'} 
+            variant="h5"
+            color={'#f0f0f0'}
+            textAlign={'center'}
           >
             Pantry Items
           </Typography>
+          
 
+          <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box sx= {style}>
+              <Typography id ="modal-modal-title" variant="h6" component={'h2'}>
+                Add Item
+              </Typography>
+              <Stack width={'100%'}direction = {'row'} spacing ={2}>
+                <TextField 
+                  id="outlined-basic" 
+                  label="Item" 
+                  variant="outlined" 
+                  fullWidth
+                  value={itemName}
+                  onChange={(e)=>setItemName(e.target.value)}
+                />
+                <Button 
+                  variant="outlined" 
+                  onClick={() => {
+                    if (itemName.trim() !== ''){
+                      addItem(itemName);
+                    } 
+                    setItemName('')
+                    handleClose();
+                  }}
+                >
+                  Add 
+                </Button>
+              </Stack>
+            </Box>
+          </Modal>
+        <Button variant = "outlined" onClick={handleOpen}>Add Item</Button>
         </Box>
         
-        <Stack width={'800px'} height={'400px'} spacing={2} overflow={'auto'}>
+        <Stack width={'85vw'} height={'500px'} spacing={2} overflow={'auto'}>
           {pantry.map(({name, count}) => (
             <Box
               key={name}
               width={'100%'}
-              minHeight={'200px'}
+              minHeight={'100px'}
               display={'flex'}
               justifyContent={'space-between'}
               alignItems={'center'}
@@ -173,23 +205,36 @@ export default function Home() {
                 variant="h5"
                 color={'#333'}
                 textAlign={'center'}
+                sx={{ flex: 1, textAlign: 'left' }}
               >
                 {
                   name.charAt(0).toUpperCase() + name.slice(1)
                 }
               </Typography>
-              <Typography variant="h5">
-                Quantity: {count}
+              
+              <Button onClick={() => {
+                addItem(name)
+              }}  >
+                <Typography variant="h4">
+                  +
+                </Typography>
+              </Button>
+
+              <Typography variant="h5" sx={{ textAlign: 'center', width: '50px' }}>
+                {count}
               </Typography>
+              
               <Button onClick={() => {
                 deleteItem(name)
               }}  >
-                Delete
+                <Typography variant="h2">
+                  -
+                </Typography>
               </Button>
             </Box>
           ))} 
         </Stack>
       </Box>
-    </Box>    
+      
   )
 }
