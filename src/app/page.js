@@ -37,6 +37,8 @@ export default function Home() {
   const handleClose = () => setOpen(false);
 
   const [itemName, setItemName] = useState('');
+
+  const [searchTerm, setSearchTerm] = useState(''); 
   // The useEffect hook is used to request data from the API endpoint 
   //once the component initially renders
 
@@ -91,6 +93,11 @@ export default function Home() {
     await updatePantry()
   }
 
+  //filters through pantry items based on users search
+  const filteredPantry = pantry.filter(({ name }) => 
+    name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return ( 
   //background
     <Box 
@@ -119,8 +126,9 @@ export default function Home() {
         top={0}
         left={0}
         zIndex={1000} // Ensure it appears on top
-        boxShadow={3} // Add shadow for visual depth
-        
+        boxShadow={3}
+         // Add shadow for visual depth
+        paddingX={3}
       >
         
         <Typography 
@@ -135,12 +143,25 @@ export default function Home() {
           Pantry Management System
         </Typography>
         
+        <Typography 
+          color={'#f0f0f0'} 
+          variant="h6" 
+          sx={{
+            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.6)',
+          // Add text shadow
+          padding: 2
+          }}
+        >
+          Nabil Hasan
+        </Typography>
+        
+        
       </Box>
 
         <Box
           //table header
           width={'85vw'}
-          height={'50px'}
+          height={'70px'}
           sx={{
             background: "linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(21,36,63,1) 100%)"
           }}
@@ -149,21 +170,47 @@ export default function Home() {
           alignItems={'center'}
           paddingX={5}
           boxShadow={3}
-
+          gap={2}
         >
-          <Typography
-            variant="h5"
-            color={'#f0f0f0'}
-            textAlign={'center'}
-            sx={{ 
-              flex: 1, 
-              textAlign: 'left' 
-            }}
-          >
-            Pantry Items
-          </Typography>
-          
-        
+              
+            <Typography
+              variant="h5"
+              color={'#f0f0f0'}
+
+            >
+              Pantry Items
+
+            </Typography>
+
+            <TextField 
+                id="filled-basic" 
+                label="Search"
+                size="small"
+                variant="filled"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)} // Update search term
+                sx={{
+                  flex:1,
+                  '& .MuiInputBase-input': {
+                    color: 'white', // Set the input text color to white
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: 'white', // Set the label text color to white
+                  },
+                  '& .MuiFilledInput-root': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)', // Optional: change background color
+                  },
+                  '& .MuiFilledInput-underline:before': {
+                    borderBottomColor: 'rgba(255, 255, 255, 0.5)', 
+                  },
+                  '& .MuiFilledInput-underline:hover:before': {
+                    borderBottomColor: 'white', 
+                  }
+                }}
+            >
+            
+            </TextField>
+
           <TextField
             //text field to add items 
             id="outlined-basic" 
@@ -174,6 +221,11 @@ export default function Home() {
             onChange={(e)=>setItemName(e.target.value)}
             InputLabelProps={{
               style: { color: 'white' }, // Set the label color to blue
+            }}
+            sx={{
+              '& .MuiInputBase-input': {
+                color: 'white', // Set the input text color to white
+              }
             }}
           />
           <Button
@@ -198,7 +250,7 @@ export default function Home() {
           spacing={2} 
           overflow={'auto'}
         >
-          {pantry.map(({name, count}) => (
+          {filteredPantry.map(({name, count}) => (
             <Box
               //loops through each document/item in the pantry database and styles it
               key={name}
@@ -214,8 +266,8 @@ export default function Home() {
                 //keeps the item on leftmost side
                 variant="h5"
                 color={'#333'}
-                textAlign={'center'}
-                sx={{ flex: 1, textAlign: 'left' }}
+                textAlign={'left'}
+                sx={{ flex: 1}}
               >
                 {
                   name.charAt(0).toUpperCase() + name.slice(1)
@@ -250,7 +302,7 @@ export default function Home() {
                   deleteItem(name)
                 }}  
               >
-                <Typography variant="h2">
+                <Typography variant="h3">
                   -
                 </Typography>
               </Button>
